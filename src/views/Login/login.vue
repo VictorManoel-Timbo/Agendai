@@ -20,7 +20,7 @@ export default defineComponent({
 </script>
 
 <template>
-    <main>
+    <main class="items-center justify-center">
         Login
         <Button @click="sendChangeTheme()" :label="theme" />
         <RouterLink to="/signup">Signup</RouterLink>
