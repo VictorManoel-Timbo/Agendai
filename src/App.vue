@@ -1,13 +1,16 @@
 <script lang="ts">
 import { RouterView } from 'vue-router'
 import { defineComponent } from 'vue'
+import Navbar from './components/Navbar/navbar.vue'
 
 export default defineComponent({
   data() {
     return {
-      theme: "Escuro",
-      isDarkMode: false
+      isDark: false
     }
+  },
+  mounted() {
+    this.setInitialTheme()
   },
   computed: {
     hasNavbar(): boolean {
@@ -15,15 +18,19 @@ export default defineComponent({
     }
   },
   methods: {
-    toggleMode(event: Event): void {
+    toggleTheme(event: Event): void {
       if (event) {
         document.documentElement.classList.toggle('my-app-dark')
-        this.setTheme()
       }
     },
-    setTheme() {
-      this.isDarkMode = !this.isDarkMode
-      this.isDarkMode ? this.theme = "Claro" : this.theme = "Escuro"
+    setInitialTheme(): void {
+      const prefersDarkScheme = window.matchMedia("(prefers-color-scheme: dark)").matches
+      if (prefersDarkScheme) {
+        this.isDark = true
+        document.documentElement.classList.toggle('my-app-dark')
+      } else {
+        this.isDark = false
+      }
     }
   }
 })
@@ -31,12 +38,10 @@ export default defineComponent({
 
 <template>
   <main class="flex flex-col items-center justify-center min-h-screen w-full overflow-x-hidden">
-    <div v-if="hasNavbar" class="w-[100vw] h-16 bg-primary-500"></div> <!--Para indicar onde será a navbar/header/barra de navegação-->
+    <Navbar v-if="hasNavbar" :isDark="isDark" @changeMode="toggleTheme($event)" />
     <RouterView 
-      @changeMode="toggleMode($event)" 
-      :theme="theme" 
-      :class="hasNavbar ? 'min-h-[calc(100vh-64px)]' : 'min-h-screen'" 
-      class="flex flex-col lg:flex-row w-full px-[2.5vw]"
+      :class="hasNavbar ? 'min-h-[calc(100vh-64px)]' : 'min-h-screen'"
+      class="flex flex-col lg:flex-row w-full px-[2.5vw]" 
       />
   </main>
 </template>

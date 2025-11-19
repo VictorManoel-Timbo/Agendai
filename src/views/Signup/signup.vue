@@ -6,24 +6,12 @@ export default defineComponent({
     data() {
         return {}
     },
-    props: {
-        theme: {
-            type: String,
-            required: true
-        }
-    },
-    methods: {
-        sendChangeTheme(): void {
-            this.$emit('changeMode', true)
-        }
-    }
 })
 </script>
 
 <template>
-    <main>
+    <main class="items-center justify-center">
         Signup
-        <Button @click="sendChangeTheme()" :label="theme" />
         <RouterLink to="/login">Login</RouterLink>
     </main>
 </template>
