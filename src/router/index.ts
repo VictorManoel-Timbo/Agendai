@@ -13,7 +13,8 @@ const router = createRouter({
       name: 'Login',
       component: () => import('@/views/Login/login.vue'),
       meta: {
-        hasNavbar: false
+        hasNavbar: false,
+        isToDesktop: true
       }
     },
     {
@@ -21,9 +22,50 @@ const router = createRouter({
       name: 'Signup',
       component: () => import('@/views/Signup/signup.vue'),
       meta: {
-        hasNavbar: false
-      }
-    }
+        hasNavbar: false,
+        isToDesktop: true
+      },
+      children: [
+        {
+          path: '/student',
+          name: 'SignupStudent',
+          component: () => import('@/views/Signup/signup.vue')//Mudar no futuro, estou colocando isso somente para sumir o erro
+        },
+        {
+          path: '/teacher',
+          name: 'SignupTeacher',
+          component: () => import('@/views/Signup/signup.vue')//Mudar no futuro, estou colocando isso somente para sumir o erro
+        }
+      ]
+    },
+    {
+      path: '/dashboard/:userId/:role',
+      name: 'Dashboard',
+      component: () => import('@/views/Dashboard/dashboard.vue'),
+      meta: {
+        hasNavbar: true,
+        isToDesktop: true
+      },
+      children: [
+        {
+          path: 'add',
+          name: 'AddEvent',
+          component: () => import('@/views/Dashboard/dashboard.vue'),//Mudar no futuro, estou colocando isso somente para sumir o erro
+          meta: {
+            isToDesktop: false
+          }
+        },
+        {
+          path: ':eventId/edit',
+          name: 'EditEvent',
+          component: () => import('@/views/Dashboard/dashboard.vue'),//Mudar no futuro, estou colocando isso somente para sumir o erro
+          meta: {
+            isToDesktop: false
+          }
+        }
+      ]
+    },
+
   ],
 })
 

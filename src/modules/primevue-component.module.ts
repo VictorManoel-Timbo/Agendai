@@ -17,7 +17,6 @@ import Password from 'primevue/password'
 import Select from 'primevue/select'
 import SelectButton from 'primevue/selectbutton'
 import Textarea from 'primevue/textarea'
-import ToggleButton from 'primevue/togglebutton'
 import TreeSelect from 'primevue/treeselect'
 import Toast from 'primevue/toast'
 
@@ -40,7 +39,6 @@ export function setPrimeComponents(app: App) {
     app.component('Select', Select),
     app.component('SelectButton', SelectButton),
     app.component('Textarea', Textarea),
-    app.component('ToggleButton', ToggleButton),
     app.component('TreeSelect', TreeSelect),
     app.component('Toast', Toast)
 }    
