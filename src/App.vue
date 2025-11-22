@@ -39,7 +39,8 @@ export default defineComponent({
 <template>
   <main class="flex flex-col items-center justify-center min-h-screen w-full overflow-x-hidden">
     <Navbar v-if="hasNavbar" :isDark="isDark" @changeMode="toggleTheme($event)" />
-    <RouterView 
+    <RouterView
+      :isDark="isDark" @changeMode="toggleTheme($event)"
       :class="hasNavbar ? 'min-h-[calc(100vh-64px)]' : 'min-h-screen'"
       class="flex flex-col lg:flex-row w-full px-[2.5vw]" 
       />
