@@ -27,12 +27,12 @@ const router = createRouter({
       },
       children: [
         {
-          path: '/student',
+          path: 'student',
           name: 'SignupStudent',
-          component: () => import('@/views/Signup/signup.vue')//Mudar no futuro, estou colocando isso somente para sumir o erro
+          component: () => import('@/views/Signup/SignupStudent/student.vue')
         },
         {
-          path: '/teacher',
+          path: 'teacher',
           name: 'SignupTeacher',
           component: () => import('@/views/Signup/signup.vue')//Mudar no futuro, estou colocando isso somente para sumir o erro
         }
