@@ -41,7 +41,7 @@ export default defineComponent({
     <Navbar v-if="hasNavbar" :isDark="isDark" @changeMode="toggleTheme($event)" />
     <RouterView
       :isDark="isDark" @changeMode="toggleTheme($event)"
-      :class="hasNavbar ? 'min-h-[calc(100vh-64px)]' : 'min-h-screen'"
+      :class="hasNavbar ? 'min-h-[calc(100vh-64px)] h-[calc(100vh-64px)]' : 'min-h-screen h-screen'"
       class="flex flex-col lg:flex-row w-full px-[2.5vw]" 
       />
   </main>
