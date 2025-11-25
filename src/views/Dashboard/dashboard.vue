@@ -1,10 +1,31 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
+import { AuthService } from '../auth.service';
+import { AuthResponse, type AuthRequest } from '@/models/auth.model';
 
 export default defineComponent({
     data() {
-        return {}
+        return {
+            data: new AuthResponse()
+        }
     },
+    methods: {
+        //Exemplo de como deve ser feita a requisição
+        login(user: AuthRequest): void {
+            this.service.auth
+                .subscribe({
+                    next: (response) => {
+                        this.data = response
+                    }
+                })
+            this.service.login(user)
+        }
+    },
+    computed: {
+        service(): AuthService {
+            return new AuthService()
+        }
+    }
 })
 </script>
 
