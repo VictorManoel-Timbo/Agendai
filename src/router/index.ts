@@ -24,19 +24,25 @@ const router = createRouter({
       meta: {
         hasNavbar: false,
         isToDesktop: true
-      },
-      children: [
-        {
-          path: '/student',
-          name: 'SignupStudent',
-          component: () => import('@/views/Signup/signup.vue')//Mudar no futuro, estou colocando isso somente para sumir o erro
-        },
-        {
-          path: '/teacher',
-          name: 'SignupTeacher',
-          component: () => import('@/views/Signup/signup.vue')//Mudar no futuro, estou colocando isso somente para sumir o erro
-        }
-      ]
+      }
+    },
+    {
+      path: '/signup/student',
+      name: 'SignupStudent',
+      component: () => import('@/views/Signup/SignupStudent/student.vue'),
+      meta: {
+        hasNavbar: false,
+        isToDesktop: true
+      }
+    },
+    {
+      path: '/signup/teacher',
+      name: 'SignupTeacher',
+      component: () => import('@/views/Signup/signup.vue'),
+      meta: {
+        hasNavbar: false,
+        isToDesktop: true
+      }
     },
     {
       path: '/dashboard/:userId/:role',
