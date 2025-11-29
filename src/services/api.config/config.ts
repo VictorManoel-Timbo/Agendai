@@ -7,10 +7,9 @@ const get = <T>(
     params?: object,
     baseURL?: string,
     responseType: ResponseType = "json",
-    token?: any
 ): Observable<T> => {
     return defer(() =>
-        api(baseURL, token).get<T>(url, { params, responseType })
+        api(baseURL).get<T>(url, { params, responseType })
     ).pipe(map((result) => result.data))
 }
 

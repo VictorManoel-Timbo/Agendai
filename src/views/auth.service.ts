@@ -18,7 +18,7 @@ export class AuthService {
                     this.auth$.next(response)
                 },
                 error: (err) => { 
-                    console.log("eero", err) 
+                    this.auth$.next(err) 
                 }
             })
     }
@@ -29,6 +29,9 @@ export class AuthService {
             .subscribe({
                 next: (response: any) => {
                     this.auth$.next(response)
+                },
+                error: (err) => {
+                    this.auth$.next(err)
                 }
             })
     }

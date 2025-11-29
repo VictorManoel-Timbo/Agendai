@@ -1,22 +1,50 @@
-import axios, { type AxiosError, type AxiosInstance, type AxiosRequestConfig } from "axios";
+import type { AuthResponse } from "@/models/auth.model"
+import { TokenUtil } from "@/utils/token.util"
+import axios, { type AxiosError, type AxiosInstance, type AxiosRequestConfig } from "axios"
 
 function apiConfig(baseUrl: string): AxiosRequestConfig {
     return {
-        baseURL: baseUrl
+        baseURL: baseUrl,
     }
 }
 
-function initAxios(config: AxiosRequestConfig, token?: any): AxiosInstance {
-    const defineInstance = axios.create(config);
+function initAxios(config: AxiosRequestConfig): AxiosInstance {
+    const defineInstance = axios.create(config)
     defineInstance.interceptors.request.use(
-        (config) => {
-            if (token) {
-                config.headers.Authorization = `Bearer ${token}`
+        async (request) => {
+            const expired = TokenUtil.isTokenExpired()
+
+            if (expired) {
+                const refreshToken = TokenUtil.getRefreshToken()
+                if (!refreshToken) {
+                    TokenUtil.clearToken()
+                    TokenUtil.clearRefreshToken()
+                    return request;
+                }
+                try {
+                    const refreshResponse = await axios.post<AuthResponse>(
+                        "/api/auth/refresh",
+                        {}, { headers: { Authorization: `Bearer ${refreshToken}` } }
+                    )
+                    TokenUtil.initialize(refreshResponse.data)
+                    request.headers = request.headers || {}
+                    request.headers.Authorization = `Bearer ${refreshResponse.data.access_token}`
+                } catch (err) {
+                    TokenUtil.clearToken();
+                    TokenUtil.clearRefreshToken();
+                }
+            } else {
+                const accessToken = TokenUtil.getAccessToken()
+                if (accessToken) {
+                    request.headers = request.headers || {}
+                    request.headers.Authorization = `Bearer ${accessToken}`
+                }
             }
-            return config
+
+            return request
         },
         (error) => Promise.reject(error)
-    );
+    )
 
     defineInstance.interceptors.response.use(
         (response) => {
@@ -25,13 +53,13 @@ function initAxios(config: AxiosRequestConfig, token?: any): AxiosInstance {
         (error: AxiosError) => {
             return Promise.reject(error)
         }
-    );
+    )
 
-    return defineInstance;
+    return defineInstance
 }
 
-function api(baseURL = "/api", token?: any) {
-    return initAxios(apiConfig(baseURL), token)
+function api(baseURL = "/api") {
+    return initAxios(apiConfig(baseURL))
 }
 
 export default api

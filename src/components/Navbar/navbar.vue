@@ -1,5 +1,5 @@
 <script lang="ts">
-import router from '@/router';
+import { TokenUtil } from '@/utils/token.util'
 import { defineComponent } from 'vue'
 
 export default defineComponent({
@@ -12,7 +12,7 @@ export default defineComponent({
                 { label: 'Cursos', role: 'admin', action: () => { console.log("Cursos") } },
                 { label: 'Período Letivo', role: 'admin', action: () => { console.log("Período Letivo") } },
                 { label: 'Notificações', role: 'user', action: () => { console.log("Notificações") } },
-                { label: 'Sair', role: 'all', action: () => { router.push('/') } },
+                { label: 'Sair', role: 'all', action: () => { this.getOut() } },
             ],
             isOpen: false
         }
@@ -41,6 +41,15 @@ export default defineComponent({
         },
         changeMenuVisibility(): void {
             this.isOpen = !this.isOpen
+        },
+        getOut(): void {
+            this.clear()
+            this.$router.push('/')
+        },
+        clear(): void {
+            TokenUtil.clearToken()
+            TokenUtil.clearRefreshToken()
+            sessionStorage.clear()
         }
     }
 })

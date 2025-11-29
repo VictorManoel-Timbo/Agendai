@@ -1,29 +1,30 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
-import { AuthService } from '../auth.service';
-import { AuthResponse, type AuthRequest } from '@/models/auth.model';
+import { Student, Teacher, User } from '@/models/user.model'
+import { UserService } from '../user.service'
 
 export default defineComponent({
     data() {
         return {
-            data: new AuthResponse()
+            data: new User() as Student || Teacher
         }
     },
+    mounted() {
+        this.getUser()
+    },
     methods: {
-        //Exemplo de como deve ser feita a requisição
-        login(user: AuthRequest): void {
-            this.service.auth
-                .subscribe({
+        getUser(): void {
+            this.service.user.pipe().subscribe({
                     next: (response) => {
                         this.data = response
-                    }
+                    },
                 })
-            this.service.login(user)
+            this.service.getUser()
         }
     },
     computed: {
-        service(): AuthService {
-            return new AuthService()
+        service(): UserService {
+            return new UserService()
         }
     }
 })
