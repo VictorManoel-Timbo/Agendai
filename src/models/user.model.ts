@@ -1,8 +1,8 @@
 class User {
     constructor(
         public id?: number,
-        public name?: string,
-        public password?: string,
+        public nome?: string,
+        public senha?: string,
         public email?: string,
         public cpf?: string,
     ) { }
@@ -10,30 +10,28 @@ class User {
 
 class Teacher extends User {
     constructor(
-        public userId?: number,
-        public universityId?: number,
-        public hireDate?: Date,
-        public degree?: string,
-        public name?: string,
-        public password?: string,
+        public idUsuario?: number,
+        public idUniversidade?: number,
+        public nome?: string,
+        public senha?: string,
         public email?: string,
         public cpf?: string
     ) {
-        super(userId, name, email, cpf)
+        super(idUsuario, nome, email, cpf)
     }
 }
 
 class Student extends User {
     constructor(
-        public userId?: number,
-        public courseId?: number,
-        public registration?: string,
-        public name?: string,
-        public password?: string,
+        public idUsuario?: number,
+        public idCurso?: number,
+        public matricula?: string,
+        public nome?: string,
+        public senha?: string,
         public email?: string,
         public cpf?: string
     ) {
-        super(userId, name, password, email, cpf)
+        super(idUsuario, nome, senha, email, cpf)
     }
 }
 

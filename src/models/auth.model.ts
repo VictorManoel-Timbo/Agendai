@@ -7,8 +7,9 @@ class AuthRequest {
 
 class AuthResponse {
     constructor(
-        public email?: string,
-        public token?: string
+        public access_token?: string,
+        public refresh_token?: string,
+        public token_type?: string
     ) { }
 }
 

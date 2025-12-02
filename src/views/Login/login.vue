@@ -1,5 +1,8 @@
 <script lang="ts">
+import { AuthRequest } from "@/models/auth.model"
 import { defineComponent } from "vue"
+import { AuthService } from "../auth.service"
+import { TokenUtil } from "@/utils/token.util"
 
 export default defineComponent({
     props: {
@@ -10,20 +13,30 @@ export default defineComponent({
     },
     data() {
         return {
-            email: "",
-            password: ""
+            authResquest: new AuthRequest('', '')
         }
     },
     methods: {
         sendChangeTheme(): void {
             this.$emit("changeMode", true)
         },
-        onSubmit(e: Event): void {
+        login(e: Event): void {
             e.preventDefault()
-            console.log("Enviando login:", {
-                email: this.email,
-                password: this.password
+            const user: AuthRequest = this.authResquest
+            this.service.auth.pipe().subscribe({
+                next: (response) => {
+                    if (response) {
+                        TokenUtil.initialize(response)
+                        this.$router.push({ name: 'Dashboard', params: { role: sessionStorage.getItem('role')} })
+                    }
+                }
             })
+            this.service.login(user)
+        }
+    },
+    computed: {
+        service(): AuthService {
+            return new AuthService()
         }
     }
 })
@@ -66,13 +79,13 @@ export default defineComponent({
             </div>
 
             <!-- FORM -->
-            <form class="flex flex-col" @submit="onSubmit">
+            <form class="flex flex-col" @submit="login">
                 <!-- EMAIL -->
                 <div class="flex flex-col gap-2 mb-8">
                     <label class="text-xl dark:text-gray-200">
                         E-mail
                     </label>
-                    <InputText v-model="email" placeholder="Digite seu e-mail" class="w-full text-lg" />
+                    <InputText v-model="authResquest.email" placeholder="Digite seu e-mail" class="w-full text-lg" />
                 </div>
 
                 <!-- PASSWORD -->
@@ -81,7 +94,7 @@ export default defineComponent({
                         Senha
                     </label>
                     <Password
-                        v-model="password"
+                        v-model="authResquest.password"
                         placeholder="Digite sua senha"
                         :feedback="false"
                         toggleMask

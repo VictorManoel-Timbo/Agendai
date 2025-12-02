@@ -1,4 +1,6 @@
 <script lang="ts">
+import { Teacher } from "@/models/user.model"
+import { AuthService } from "@/views/auth.service"
 import { defineComponent } from "vue"
 
 export default defineComponent({
@@ -10,14 +12,9 @@ export default defineComponent({
     },
     data() {
         return {
-            name: '',
-            institution: '',
-            course: '',
-            cpf: '',
-            email: '',
-            password: '',
+            institution: 1,
             passwordConfirm: '',
-            
+            user: new Teacher(undefined, undefined, '', '', '', ''),
             institutions: [
                 { label: 'UECE', value: 1 }
                
@@ -29,17 +26,20 @@ export default defineComponent({
         sendChangeTheme(): void {
             this.$emit("changeMode", true)
         },
-        onSubmit(e: Event): void {
+        signup(e: Event): void {
             e.preventDefault()
-            console.log("Cadastro realizado:", {
-                name: this.name,
-                institution: this.institution,
-                course: this.course,
-                cpf: this.cpf,
-                email: this.email,
-                password: this.password,
-                passwordConfirm: this.passwordConfirm
+            this.user.idUniversidade = 1
+            this.service.auth.pipe().subscribe({
+                next: (response) => {
+                    this.$router.push('/')
+                }
             })
+            this.service.signup(this.user)
+        }
+    },
+    computed: {
+        service(): AuthService {
+            return new AuthService()
         }
     }
 })
@@ -77,7 +77,7 @@ export default defineComponent({
             <!-- HEADER -->
             <div class="flex items-center justify-between mb-2">
                 <button @click="$router.back()" class="text-2xl text-black dark:text-white">
-                   <v-icon name="pr-arrow-left" class="text-2xl" />
+                   <v-icon name="pr-arrow-left" class="1.2" />
                 </button>
 
                 <h1 class="text-3xl text-black dark:text-white">AgendAí</h1>
@@ -86,14 +86,14 @@ export default defineComponent({
             </div>
             <!-- FORM -->
             <form
-                @submit="onSubmit"
+                @submit="signup"
                 class="grid grid-cols-1 gap-6 md:grid-cols-2"
             >
                 <!-- NOME -->
                 <div class="flex flex-col gap-2 md:col-span-2">
                     <label class="text-xl dark:text-gray-200">Nome</label>
                     <InputText
-                        v-model="name"
+                        v-model="user.nome"
                         placeholder="Digite seu nome"
                         class="w-full text-lg h-[48px]"
                         :pt="{ root: 'h-[48px]' }"
@@ -120,7 +120,7 @@ export default defineComponent({
                 <div class="flex flex-col gap-2">
                     <label class="text-xl dark:text-gray-200">CPF</label>
                     <InputText
-                        v-model="cpf"
+                        v-model="user.cpf"
                         placeholder="Digite seu CPF"
                         class="w-full text-lg h-[48px]"
                         :pt="{ root: 'h-[48px]' }"
@@ -130,7 +130,7 @@ export default defineComponent({
                 <div class="flex flex-col gap-2 md:col-span-2">
                     <label class="text-xl dark:text-gray-200">E-mail</label>
                     <InputText
-                        v-model="email"
+                        v-model="user.email"
                         placeholder="Digite seu email"
                         class="w-full text-lg h-[48px]"
                         :pt="{ root: 'h-[48px]' }"
@@ -140,7 +140,7 @@ export default defineComponent({
                 <div class="flex flex-col gap-2">
                     <label class="text-xl dark:text-gray-200">Senha</label>
                     <Password
-                        v-model="password"
+                        v-model="user.senha"
                         placeholder="Digite sua senha"
                         :feedback="false"
                         toggleMask
