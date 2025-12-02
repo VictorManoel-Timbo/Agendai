@@ -30,9 +30,12 @@ export default defineComponent({
 </script>
 
 <template>
-    <main class="items-center justify-center">
-        Dash
-        <RouterLink to="/login">Login</RouterLink>
-        <RouterLink to="/signup">Signup</RouterLink>
+    <main class="items-center justify-center flex-col-reverse">
+        <div class="w-full">
+            Dash
+            <RouterLink to="/login">Login</RouterLink>
+            <RouterLink to="/signup">Signup</RouterLink>
+        </div>
+        <Calendar></Calendar>
     </main>
 </template>

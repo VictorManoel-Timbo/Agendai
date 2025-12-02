@@ -53,7 +53,7 @@ export default defineComponent({
             <v-icon :name="isOpen? 'pr-ellipsis-v' : 'pr-bars'" scale="1.5"></v-icon>
             <transition name="slide-down">
                 <div v-if="isOpen"
-                    class="absolute mt-1 left-4 bg-neutral-100 dark:bg-zinc-800 w-auto text-black dark:text-white border border-zinc-400 dark:border-neutral-600 shadow-lg rounded-xl px-4 py-2 z-50">
+                    class="absolute mt-1 left-4 bg-neutral-100 dark:bg-zinc-800 w-auto text-black dark:text-white border border-zinc-400 dark:border-neutral-600 shadow-lg rounded-lg px-4 py-2 z-50">
 
                     <div v-for="option in visibleOptions" :key="option.label" class="py-2 cursor-pointer text-base"
                         @click="option.action(); changeMenuVisibility()">
@@ -66,7 +66,7 @@ export default defineComponent({
 
         <span class="text-3xl font-semibold">AgendAí</span>
 
-        <div class="flex flex-row gap-x-[2vw]">
+        <div class="flex flex-row gap-x-[2.5vw]">
             <div class="hidden md:flex items-center justify-center gap-x-[2.5vw] 2xl:gap-x-10">
                 <template v-for="option in visibleOptions" :key="option.label">
                     <span @click="option.action" class="text-base font-medium cursor-pointer">
