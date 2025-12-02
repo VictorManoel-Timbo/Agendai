@@ -38,7 +38,7 @@ const router = createRouter({
     {
       path: '/signup/teacher',
       name: 'SignupTeacher',
-      component: () => import('@/views/Signup/signup.vue'),
+      component: () => import('@/views/Signup/SignupTeacher/teacher.vue'),
       meta: {
         hasNavbar: false,
         isToDesktop: true
