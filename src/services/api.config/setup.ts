@@ -1,4 +1,5 @@
 import type { AuthResponse } from "@/models/auth.model"
+import { ToastHandler } from "@/utils/toast-handler.util"
 import { TokenUtil } from "@/utils/token.util"
 import axios, { type AxiosError, type AxiosInstance, type AxiosRequestConfig } from "axios"
 
@@ -19,19 +20,23 @@ function initAxios(config: AxiosRequestConfig): AxiosInstance {
                 if (!refreshToken) {
                     TokenUtil.clearToken()
                     TokenUtil.clearRefreshToken()
-                    return request;
+                    return request
                 }
                 try {
                     const refreshResponse = await axios.post<AuthResponse>(
                         "/api/auth/refresh",
                         {}, { headers: { Authorization: `Bearer ${refreshToken}` } }
                     )
+
                     TokenUtil.initialize(refreshResponse.data)
                     request.headers = request.headers || {}
                     request.headers.Authorization = `Bearer ${refreshResponse.data.access_token}`
+
+                    ToastHandler.info("Sessão renovada.")
                 } catch (err) {
-                    TokenUtil.clearToken();
-                    TokenUtil.clearRefreshToken();
+                    ToastHandler.error("Não foi possível renovar a sessão.")
+                    TokenUtil.clearToken()
+                    TokenUtil.clearRefreshToken()
                 }
             } else {
                 const accessToken = TokenUtil.getAccessToken()
@@ -43,7 +48,10 @@ function initAxios(config: AxiosRequestConfig): AxiosInstance {
 
             return request
         },
-        (error) => Promise.reject(error)
+        (error) => {
+            ToastHandler.handleError(error)
+            Promise.reject(error)
+        }
     )
 
     defineInstance.interceptors.response.use(
@@ -51,6 +59,7 @@ function initAxios(config: AxiosRequestConfig): AxiosInstance {
             return response
         },
         (error: AxiosError) => {
+            ToastHandler.handleError(error)
             return Promise.reject(error)
         }
     )

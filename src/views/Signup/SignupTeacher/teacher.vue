@@ -1,5 +1,6 @@
 <script lang="ts">
 import { Teacher } from "@/models/user.model"
+import { ToastHandler } from "@/utils/toast-handler.util"
 import { AuthService } from "@/views/auth.service"
 import { defineComponent } from "vue"
 
@@ -32,6 +33,7 @@ export default defineComponent({
             this.service.auth.pipe().subscribe({
                 next: (response) => {
                     this.$router.push('/')
+                    ToastHandler.success("Usuário cadastrado com sucesso.")
                 }
             })
             this.service.signup(this.user)

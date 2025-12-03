@@ -2,6 +2,8 @@
 import { RouterView } from 'vue-router'
 import { defineComponent } from 'vue'
 import Navbar from './components/Navbar/navbar.vue'
+import { useToast } from 'primevue/usetoast'
+import { setToast } from './utils/global-toast.util'
 
 export default defineComponent({
   data() {
@@ -10,6 +12,7 @@ export default defineComponent({
     }
   },
   mounted() {
+    setToast(useToast())
     this.setInitialTheme()
   },
   computed: {
@@ -38,6 +41,7 @@ export default defineComponent({
 
 <template>
   <main class="flex flex-col items-center justify-center min-h-screen w-full overflow-x-hidden">
+    <Toast />
     <Navbar v-if="hasNavbar" :isDark="isDark" @changeMode="toggleTheme($event)" />
     <RouterView
       :isDark="isDark" @changeMode="toggleTheme($event)"
