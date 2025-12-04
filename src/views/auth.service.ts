@@ -27,7 +27,7 @@ export class AuthService {
         this._auth.signup(user)
             .pipe()
             .subscribe({
-                next: (response: any) => {
+                next: (response) => {
                     this.auth$.next(response)
                 },
                 error: (err) => {

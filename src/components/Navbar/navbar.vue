@@ -7,7 +7,7 @@ export default defineComponent({
     data() {
         return {
             options: [
-                { label: 'Inicio', role: 'all', action: () => { console.log("Inicio") } },
+                { label: 'Inicio', role: 'all', action: () => { window.location.reload() } },
                 { label: 'Horário', role: 'admin', action: () => { console.log("Horário") } },
                 { label: 'Cursos', role: 'admin', action: () => { console.log("Cursos") } },
                 { label: 'Período Letivo', role: 'admin', action: () => { console.log("Período Letivo") } },
