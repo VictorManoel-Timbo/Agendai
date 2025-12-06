@@ -74,8 +74,8 @@ export class TokenUtil {
     private static storeUserRole(decodedToken: any): void {
         if (!decodedToken) return
 
-        if (decodedToken.tag === 'universideda') {
-            sessionStorage.setItem("role", 'university')
+        if (decodedToken.tag === 'universidade') {
+            sessionStorage.setItem("role", 'admin')
         }
 
         if (decodedToken.tag === 'aluno') {
