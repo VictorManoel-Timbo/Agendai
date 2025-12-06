@@ -26,7 +26,7 @@ export default defineComponent({
     computed: {
         visibleOptions(): any {
             const role: string | string[] = this.$route.params.role
-            return this.options.filter(opt => this.canShow(role, opt.role))
+            return this.options.filter(option => this.canShow(role, option.role))
         }
     },
     methods: {
@@ -35,8 +35,8 @@ export default defineComponent({
         },
         canShow(role: string | string[], itemRole: string): boolean {
             if (itemRole === 'all') return true
-            if (role === 'admin' && itemRole === 'admin') return true
-            if ((role === 'student' || role === 'teacher') && itemRole === 'user') return true
+            if (role === 'universidade' && itemRole === 'admin') return true
+            if ((role === 'aluno' || role === 'professor') && itemRole === 'user') return true
             return false
         },
         changeMenuVisibility(): void {
