@@ -4,6 +4,9 @@ import { ToastHandler } from "@/utils/toast-handler.util"
 import { AuthService } from "@/views/auth.service"
 import { defineComponent } from "vue"
 
+import useVuelidate from "@vuelidate/core"
+import { required, minLength, maxLength, sameAs } from "@vuelidate/validators"
+
 export default defineComponent({
     props: {
         isDark: {
@@ -18,10 +21,31 @@ export default defineComponent({
             user: new Teacher(undefined, undefined, '', '', '', ''),
             institutions: [
                 { label: 'UECE', value: 1 }
-               
             ],
-        
+            v$: null as any
         }
+    },
+    created() {
+        const rules = {
+            user: {
+                nome: { required },
+                email: { required },
+                cpf: { 
+                    required,
+                    minLength: minLength(11),
+                    maxLength: maxLength(11)
+                },
+                senha: { 
+                    required, 
+                    minLength: minLength(8) 
+                }
+            },
+            passwordConfirm: {
+                required,
+                sameAsPassword: sameAs(() => this.user.senha)
+            }
+        }
+        this.v$ = useVuelidate(rules, this)
     },
     methods: {
         sendChangeTheme(): void {
@@ -29,7 +53,16 @@ export default defineComponent({
         },
         signup(e: Event): void {
             e.preventDefault()
+
+            this.v$.$touch()
+            if (this.v$.$invalid) {
+                ToastHandler.error("Verifique os campos obrigatórios.")
+                return
+            }
+
             this.user.idUniversidade = 1
+            this.user.email = this.user.email + "@uece.br"
+
             this.service.auth.pipe().subscribe({
                 next: (response) => {
                     this.$router.push('/')
@@ -87,10 +120,7 @@ export default defineComponent({
                 <ToggleThemeButton :isDark="isDark" @changeMode="sendChangeTheme"/>
             </div>
             <!-- FORM -->
-            <form
-                @submit="signup"
-                class="grid grid-cols-1 gap-6 md:grid-cols-2"
-            >
+            <form @submit="signup" class="grid grid-cols-1 gap-6 md:grid-cols-2">
                 <!-- NOME -->
                 <div class="flex flex-col gap-2 md:col-span-2">
                     <label class="text-xl dark:text-gray-200">Nome</label>
@@ -100,6 +130,32 @@ export default defineComponent({
                         class="w-full text-lg h-[48px]"
                         :pt="{ root: 'h-[48px]' }"
                     />
+                    <span v-if="v$.user.nome.$error" class="text-red-500 text-sm">
+                        Nome é obrigatório.
+                    </span>
+                </div>
+                <!-- E-MAIL -->
+                <div class="flex flex-col gap-2 md:col-span-2">
+                    <label class="text-xl dark:text-gray-200">E-mail</label>
+                    <div class="flex items-center w-full">
+                        <InputText
+                            v-model="user.email"
+                            placeholder="Digite seu e-mail (sem domínio)"
+                            class="w-full text-lg h-[48px] rounded-r-none"
+                            :pt="{ root: 'h-[48px] !rounded-r-none px-3 text-lg' }"
+                        />
+                        <span
+                            class="
+                                px-3 h-[48px] flex items-center border border-l-0 rounded-r-lg
+                                dark:border-zinc-700 text-lg bg-gray-100 dark:bg-zinc-700 dark:text-gray-200
+                            "
+                        >
+                            @uece.br
+                        </span>
+                    </div>
+                    <span v-if="v$.user.email.$error" class="text-red-500 text-sm">
+                        E-mail é obrigatório.
+                    </span>
                 </div>
                 <!-- INSTITUIÇÃO -->
                 <div class="flex flex-col gap-2">
@@ -110,14 +166,13 @@ export default defineComponent({
                         optionLabel="label"
                         placeholder="UECE"
                         disabled
-                        class="w-full h-[48px]"
+                        class="w-full h-[48px] opacity-70 cursor-not-allowed"
                         :pt="{
                             root: 'w-full h-[48px] rounded-lg border dark:bg-zinc-700 flex items-center',
                             input: 'px-3 text-lg'
                         }"
                     />
                 </div>
-                
                 <!-- CPF -->
                 <div class="flex flex-col gap-2">
                     <label class="text-xl dark:text-gray-200">CPF</label>
@@ -127,16 +182,9 @@ export default defineComponent({
                         class="w-full text-lg h-[48px]"
                         :pt="{ root: 'h-[48px]' }"
                     />
-                </div>
-                <!-- EMAIL -->
-                <div class="flex flex-col gap-2 md:col-span-2">
-                    <label class="text-xl dark:text-gray-200">E-mail</label>
-                    <InputText
-                        v-model="user.email"
-                        placeholder="Digite seu email"
-                        class="w-full text-lg h-[48px]"
-                        :pt="{ root: 'h-[48px]' }"
-                    />
+                    <span v-if="v$.user.cpf.$error" class="text-red-500 text-sm">
+                        CPF é obrigatório.
+                    </span>
                 </div>
                 <!-- SENHA -->
                 <div class="flex flex-col gap-2">
@@ -150,6 +198,9 @@ export default defineComponent({
                         class="text-lg"
                         :pt="{ root: 'w-full', input: 'h-[48px] px-3 text-lg' }"
                     />
+                    <span v-if="v$.user.senha.$error" class="text-red-500 text-sm">
+                        A senha deve ter pelo menos 8 caracteres.
+                    </span>
                 </div>
                 <!-- CONFIRMAR SENHA -->
                 <div class="flex flex-col gap-2 mb-5">
@@ -163,6 +214,9 @@ export default defineComponent({
                         class="text-lg"
                         :pt="{ root: 'w-full', input: 'h-[48px] px-3 text-lg' }"
                     />
+                    <span v-if="v$.passwordConfirm.$error" class="text-red-500 text-sm">
+                        As senhas não coincidem.
+                    </span>
                 </div>
                 <!-- CONTINUAR -->
                 <Button
