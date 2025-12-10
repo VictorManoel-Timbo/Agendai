@@ -2,6 +2,7 @@
 import { defineComponent } from 'vue'
 import { Student, Teacher, User } from '@/models/user.model'
 import { UserService } from '../user.service'
+import { JournalEventService } from '../event.service'
 
 export default defineComponent({
     data() {
@@ -25,6 +26,9 @@ export default defineComponent({
     computed: {
         service(): UserService {
             return new UserService()
+        },
+        eventService() {
+            return new JournalEventService()
         }
     }
 })
