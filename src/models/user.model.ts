@@ -11,7 +11,7 @@ class User {
 class Teacher extends User {
     constructor(
         public idUsuario?: number,
-        public idUniversidade?: number,
+        public id_universidade?: number,
         public nome?: string,
         public senha?: string,
         public email?: string,
@@ -24,7 +24,7 @@ class Teacher extends User {
 class Student extends User {
     constructor(
         public idUsuario?: number,
-        public idCurso?: number,
+        public id_curso?: number,
         public matricula?: string,
         public nome?: string,
         public senha?: string,

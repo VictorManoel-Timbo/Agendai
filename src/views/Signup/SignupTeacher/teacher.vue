@@ -5,7 +5,7 @@ import { AuthService } from "@/views/auth.service"
 import { defineComponent } from "vue"
 
 import useVuelidate from "@vuelidate/core"
-import { required, minLength, maxLength, sameAs } from "@vuelidate/validators"
+import { required, minLength, maxLength } from "@vuelidate/validators"
 
 export default defineComponent({
     props: {
@@ -22,7 +22,8 @@ export default defineComponent({
             institutions: [
                 { label: 'UECE', value: 1 }
             ],
-            v$: null as any
+            v$: null as any,
+            passwordsMismatch: false as boolean 
         }
     },
     created() {
@@ -42,7 +43,7 @@ export default defineComponent({
             },
             passwordConfirm: {
                 required,
-                sameAsPassword: sameAs(() => this.user.senha)
+                minLength: minLength(8)
             }
         }
         this.v$ = useVuelidate(rules, this)
@@ -54,13 +55,20 @@ export default defineComponent({
         signup(e: Event): void {
             e.preventDefault()
 
+            this.passwordsMismatch = false
             this.v$.$touch()
             if (this.v$.$invalid) {
                 ToastHandler.error("Verifique os campos obrigatórios.")
                 return
             }
 
-            this.user.idUniversidade = 1
+            if (this.user.senha !== this.passwordConfirm) {
+                this.passwordsMismatch = true
+                ToastHandler.error("As senhas não coincidem.")
+                return
+            }
+
+            this.user.id_universidade = 1
             this.user.email = this.user.email + "@uece.br"
 
             this.service.auth.pipe().subscribe({
@@ -214,7 +222,10 @@ export default defineComponent({
                         class="text-lg"
                         :pt="{ root: 'w-full', input: 'h-[48px] px-3 text-lg' }"
                     />
-                    <span v-if="v$.passwordConfirm.$error" class="text-red-500 text-sm">
+                    <span v-if="v$.passwordConfirm.required.$invalid && v$.$dirty" class="text-red-500 text-sm">
+                        Confirmação de senha é obrigatória.
+                    </span>
+                    <span v-else-if="passwordsMismatch" class="text-red-500 text-sm">
                         As senhas não coincidem.
                     </span>
                 </div>

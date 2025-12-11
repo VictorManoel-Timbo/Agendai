@@ -7,7 +7,7 @@ import { defineComponent } from 'vue'
 
 import { ToastHandler } from "@/utils/toast-handler.util"
 import useVuelidate from '@vuelidate/core'
-import { required, sameAs, minLength, maxLength } from '@vuelidate/validators'
+import { required, minLength, maxLength } from '@vuelidate/validators'
 
 export default defineComponent({
     props: {
@@ -31,7 +31,8 @@ export default defineComponent({
                 { label: 'Graduação', value: true },
                 { label: 'Pós-graduação', value: false }
             ],
-            v$: null as any
+            v$: null as any,
+            passwordsMismatch: false as boolean 
         }
     },
     computed: {
@@ -48,7 +49,7 @@ export default defineComponent({
                         required,
                         maxLength: maxLength(7)
                     },
-                    idCurso: { required },
+                    id_curso: { required },
                     email: { required },
                     senha: { 
                         required,
@@ -57,7 +58,7 @@ export default defineComponent({
                 },
                 passwordConfirm: {
                     required,
-                    sameAsPassword: sameAs(() => this.user.senha)
+                    minLength: minLength(8)
                 }
             }
         },
@@ -82,6 +83,8 @@ export default defineComponent({
         },
         signup(e: Event): void {
             e.preventDefault()
+            
+            this.passwordsMismatch = false
 
             this.v$.$touch()
             if (this.v$.$invalid) {
@@ -89,13 +92,22 @@ export default defineComponent({
                 return
             }
 
+            if (this.user.senha !== this.passwordConfirm) {
+                this.passwordsMismatch = true 
+                ToastHandler.error("As senhas não coincidem.")
+                return
+            }
+            
+
             this.user.email = `${this.user.email}@aluno.uece.br`
-            const tempId: any = this.user.idCurso
-            this.user.idCurso = tempId?.id
+            
+            const tempId: any = this.user.id_curso
+            this.user.id_curso = tempId?.id
 
             this.authService.auth.pipe().subscribe({
                 next: (response) => {
                     this.$router.push('/')
+                    ToastHandler.success("Usuário cadastrado com sucesso.")
                 }
             })
             this.authService.signup(this.user)
@@ -241,7 +253,7 @@ export default defineComponent({
                 <div class="flex flex-col gap-2">
                     <label class="text-xl dark:text-gray-200">Curso</label>
                     <Select 
-                        v-model="user.idCurso" 
+                        v-model="user.id_curso" 
                         :options="courses" 
                         optionLabel="nome" 
                         placeholder="Selecione o curso"
@@ -251,7 +263,7 @@ export default defineComponent({
                             input: 'px-3 text-lg'
                         }" 
                     />
-                    <span v-if="v$.user.idCurso.$error" class="text-red-500 text-sm">
+                    <span v-if="v$.user.id_curso.$error" class="text-red-500 text-sm">
                         Curso é obrigatório.
                     </span>
                 </div>
@@ -283,7 +295,10 @@ export default defineComponent({
                         class="text-lg"
                         :pt="{ root: 'w-full', input: 'h-[48px] px-3 text-lg' }" 
                     />
-                    <span v-if="v$.passwordConfirm.$error" class="text-red-500 text-sm">
+                    <span v-if="v$.passwordConfirm.required.$invalid && v$.$dirty" class="text-red-500 text-sm">
+                        Confirmação de senha é obrigatória.
+                    </span>
+                    <span v-else-if="passwordsMismatch" class="text-red-500 text-sm">
                         As senhas não coincidem.
                     </span>
                 </div>
