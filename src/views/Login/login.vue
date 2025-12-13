@@ -106,7 +106,7 @@ export default defineComponent({
                 <!-- FORGOT PASSWORD -->
                 <div class="flex justify-end -mt-2 mb-12">
                     <RouterLink
-                        to="/forgot"
+                        to="/forgot-password"
                         class="text-md text-black/70 dark:text-gray-300 hover:underline"
                     >
                         esqueceu a senha?
