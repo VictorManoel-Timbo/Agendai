@@ -4,8 +4,12 @@ import { User } from '@/models/user.model'
 import { UserService } from '../user.service'
 import { JournalEventService } from '../event.service'
 import type { JournalEvent } from '@/models/event.model'
+import ModalEvent from '@/components/ModalEvent/modalevent.vue'
 
 export default defineComponent({
+    components: {
+        ModalEvent,
+    },
     data() {
         return {
             currentDate: new Date(),
@@ -31,6 +35,7 @@ export default defineComponent({
                     icon: 'pi pi-fw pi-user'
                 }
             ],
+            showCreateEventModal: false
         }
     },
     mounted() {
@@ -38,6 +43,17 @@ export default defineComponent({
         //this.getUser()
     },
     methods: {
+        openCreateEvent() {
+            console.log('clicou')
+            this.showCreateEventModal = true
+        },
+        closeCreateEvent() {
+            this.showCreateEventModal = false
+        },
+        onEventSaved() {
+            this.showCreateEventModal = false
+            this.getEvents({ data: this.dateFilter, categoria: this.selectedCategory})
+        },
         getUser(): void {
             this.userService.user.pipe().subscribe({
                 next: (response) => {
@@ -141,7 +157,7 @@ export default defineComponent({
                 <div class="flex justify-between items-center min-w-fit w-full max-w-1/2 sm:gap-4">
                     <h2 class="font-bold text-2xl">Eventos de hoje</h2>
 
-                    <Button class="!px-2 !sm:px-3 w-fit h-12">
+                    <Button class="!px-2 !sm:px-3 w-fit h-12" @click="openCreateEvent">
                         <span>Novo evento</span>
                         <v-icon name="pr-plus" scale="1.5" />
                     </Button>
@@ -194,6 +210,11 @@ export default defineComponent({
 
         </section>
         <Calendar @update:selected="handleDateUpdate"></Calendar>
+        <ModalEvent
+            :visible="showCreateEventModal"
+            @close="closeCreateEvent"
+            @saved="onEventSaved"
+        />
     </main>
 </template>
 

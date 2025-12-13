@@ -1,8 +1,10 @@
 <script lang="ts">
 import { defineComponent, ref, computed, watch } from "vue";
 
-import { JournalEvent } from "@/models/event.model";
+import { JournalEvent, JournalEventOcurrence } from "@/models/event.model";
 import { JournalEventService } from "@/views/event.service";
+import { Calendar } from "primevue";
+import Dropdown from 'primevue/dropdown'
 
 // Tipagem do SelectButton Context (essencial para resolver o erro 'any')
 
@@ -34,6 +36,10 @@ interface EventForm {
 }
 
 export default defineComponent({
+  components: {
+    PrimeCalendar: Calendar,
+    Dropdown
+  },
   props: {
     visible: { type: Boolean, required: true },
   },
@@ -47,8 +53,8 @@ export default defineComponent({
       nome: "",
       descricao: "",
       categoria: "",
-      data_inicio: new Date(),
-      data_termino: new Date(),
+      data_inicio: null,
+      data_termino: null,
       horario_inicio: "00:00:00",
       horario_termino: "00:00:00",
       local_padrao: "",
@@ -73,15 +79,9 @@ export default defineComponent({
     ]);
 
     const categorias = [
-      { label: "Aula", value: "aula" },
-
-      { label: "Reunião", value: "reuniao" },
-
-      { label: "Atividade", value: "atividade" },
-
-      { label: "Prova", value: "prova" },
-
-      { label: "Outro", value: "outro" },
+      { label: 'Disciplina', value: 'disciplina' },
+      { label: 'Institucional', value: 'institucional' },
+      { label: 'Particular', value: 'particular' },
     ];
 
     const isRecorrenciaFrequente = computed(
@@ -151,7 +151,7 @@ export default defineComponent({
     );
 
     function save() {
-      const payload: JournalEvent = {
+      const payload: JournalEventOcurrence = {
         ...eventData.value,
 
         data_inicio: eventData.value.data_inicio ?? undefined,
@@ -176,21 +176,13 @@ export default defineComponent({
 
     return {
       eventData,
-
       categorias,
-
       recorrenciaOptions,
-
       dayOptions,
-
       isRecorrenciaFrequente,
-
       recorrenciaPT, // Retornado o PT tipado
-
       diasSemanaPT, // Retornado o PT tipado
-
       save,
-
       close,
     };
   },
@@ -198,15 +190,14 @@ export default defineComponent({
 </script>
 
 <template>
-  <Dialog
-    :visible="visible"
-    @update:visible="close"
-    modal
-    header="Novo Evento"
-    :style="{ width: '34rem' }"
-    class="p-2"
-    :draggable="false"
-  >
+    <Dialog
+      :visible="visible"
+      @update:visible="close"
+      modal
+      appendTo="body"
+      :style="{ width: '34rem' }"
+      :draggable="false"
+    > 
     <template #header>
       <div class="flex items-center justify-between w-full">
         <span class="text-xl font-bold">Título</span>
@@ -260,15 +251,17 @@ export default defineComponent({
       >
         <label class="text-sm font-semibold">Dia:</label>
 
-        <Calendar
+        <PrimeCalendar
           v-model="eventData.data_inicio"
-          class="w-full"
           dateFormat="dd/mm/yy"
-          placeholder="__/__/____"
-          :manualInput="false"
+          placeholder="__/__/___"
           showIcon
+          :manualInput="false"
+          appendTo="body"
+          panelStyleClass="modal-calendar"
+          :touchUI="false"
+          class="w-full"
           :input-class="'w-full py-3'"
-          @date-select="eventData.data_termino = eventData.data_inicio"
         />
       </div>
 
@@ -280,25 +273,31 @@ export default defineComponent({
           <label class="text-sm font-semibold">Período:</label>
 
           <div class="flex items-center gap-2">
-            <Calendar
+            <PrimeCalendar
               v-model="eventData.data_inicio"
               dateFormat="dd/mm/yy"
-              placeholder="__/__/____"
-              class="w-1/2"
-              :manualInput="false"
+              placeholder="__/__/___"
               showIcon
+              :manualInput="false"
+              appendTo="body"
+              panelStyleClass="modal-calendar"
+              :touchUI="false"
+              class="w-full"
               :input-class="'w-full py-3'"
             />
 
             <span class="text-xl font-light text-gray-400">—</span>
 
-            <Calendar
+            <PrimeCalendar
               v-model="eventData.data_termino"
               dateFormat="dd/mm/yy"
-              placeholder="__/__/____"
-              class="w-1/2"
-              :manualInput="false"
+              placeholder="__/__/___"
               showIcon
+              :manualInput="false"
+              appendTo="body"
+              panelStyleClass="modal-calendar"
+              :touchUI="false"
+              class="w-full"
               :input-class="'w-full py-3'"
             />
           </div>
@@ -340,7 +339,7 @@ export default defineComponent({
           optionLabel="label"
           optionValue="value"
           class="w-full"
-          placeholder="Selecione..."
+          placeholder="Selecione a categoria"
         />
       </div>
 
