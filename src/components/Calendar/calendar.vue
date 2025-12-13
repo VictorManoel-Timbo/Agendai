@@ -163,7 +163,7 @@ export default defineComponent({
 
 <template>
     <section
-        class="min-w-[50vw] w-full md:h-full flex flex-col justify-center md:w-3/4 lg:w-2/3 px-0 sm:px-[3vw] md:px-0 py-6">
+        class="min-w-[50vw] w-full md:h-full flex flex-col justify-center lg:w-3/4 px-0 sm:px-[3vw] md:px-0 py-6">
 
         <div class="relative flex items-center justify-between pl-[1vw] min-[375px]:pl-[3vw] sm:px-[3vw] md:px-0 mb-2">
 
@@ -207,7 +207,7 @@ export default defineComponent({
                 </div>
             </div>
 
-            <div class="flex gap-3">
+            <div class="flex gap-8">
                 <button @click="prevMonth" class="p-1 rounded hover:bg-neutral-200 dark:hover:bg-zinc-700 md:hidden">
                     <v-icon name="pr-angle-left" scale="1.5" />
                 </button>

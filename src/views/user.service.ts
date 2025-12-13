@@ -12,7 +12,7 @@ export class UserService {
         this._user.getUser()
             .pipe()
             .subscribe({
-                next: (response: any) => {
+                next: (response) => {
                     this.user$.next(response)
                 },
                 error: (err) => {

@@ -1,4 +1,4 @@
-import type { JournalEvent } from "@/models/event.model"
+import type { JournalEventOcurrence } from "@/models/event.model"
 import { JournalEventRest } from "@/services/rest/events.rest"
 import { BehaviorSubject, Observable } from "rxjs"
 
@@ -11,11 +11,11 @@ export class JournalEventService {
     event: Observable<any> = this.event$.asObservable()
     participants: Observable<any> = this.participants$.asObservable()
 
-    create(body: { evento: JournalEvent }): void {
+    create(body: { evento: JournalEventOcurrence }): void {
         this._event.create(body)
             .pipe()
             .subscribe({
-                next: (response: any) => {
+                next: (response) => {
                     this.event$.next(response)
                 },
                 error: (err) => {
@@ -37,7 +37,7 @@ export class JournalEventService {
             })
     }
 
-    getEvents(params?: { data: string, categoria?: string }): void {
+    getEvents(params?: { data?: string, categoria?: string }): void {
         this._event.getEvents(params)
             .pipe()
             .subscribe({

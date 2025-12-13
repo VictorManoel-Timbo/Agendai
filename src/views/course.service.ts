@@ -12,7 +12,7 @@ export class CourseService {
         this._course.getCourses(filter)
             .pipe()
             .subscribe({
-                next: (response: any) => {
+                next: (response) => {
                     this.course$.next(response)
                 },
                 error: (err) => {
