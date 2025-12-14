@@ -105,9 +105,8 @@ export default defineComponent({
             this.user.id_curso = tempId?.id
 
             this.authService.auth.pipe().subscribe({
-                next: (response) => {
+                next: () => {
                     this.$router.push('/')
-                    ToastHandler.success("Usuário cadastrado com sucesso.")
                 }
             })
             this.authService.signup(this.user)

@@ -1,11 +1,16 @@
+import type { ToastServiceMethods } from "primevue/toastservice"
 import { useGlobalToast } from "./global-toast.util"
 
 export class ToastHandler {
 
-    private static toast = useGlobalToast()
+    private static getToast(): ToastServiceMethods {
+        // Obter o serviço de toast no momento da chamada do método.
+        return useGlobalToast()
+    }
 
     static success(message: string, title = "Sucesso") {
-        this.toast.add({
+        const toast = this.getToast()
+        toast.add({
             severity: "success",
             summary: title,
             detail: message,
@@ -14,7 +19,8 @@ export class ToastHandler {
     }
 
     static info(message: string, title = "Informação") {
-        this.toast.add({
+        const toast = this.getToast()
+        toast.add({
             severity: "info",
             summary: title,
             detail: message,
@@ -23,7 +29,8 @@ export class ToastHandler {
     }
 
     static warn(message: string, title = "Atenção") {
-        this.toast.add({
+        const toast = this.getToast()
+        toast.add({
             severity: "warn",
             summary: title,
             detail: message,
@@ -32,7 +39,8 @@ export class ToastHandler {
     }
 
     static error(message: string, title = "Erro") {
-        this.toast.add({
+        const toast = this.getToast()
+        toast.add({
             severity: "error",
             summary: title,
             detail: message,

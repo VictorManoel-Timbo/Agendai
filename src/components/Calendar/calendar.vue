@@ -12,10 +12,10 @@ interface DayCell {
 export default defineComponent({
     name: 'Calendar',
     data() {
-        const today = new Date()
+        const now = new Date()
         return {
-            today,
-            currentMonthDate: new Date(today.getFullYear(), today.getMonth(), 1),
+            today: new Date(now.getFullYear(), now.getMonth(), now.getDate()),
+            currentMonthDate: new Date(now.getFullYear(), now.getMonth(), 1),
             cells: [] as DayCell[],
             selectedDateIso: '' as string,
             weekdays: ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'] as string[],

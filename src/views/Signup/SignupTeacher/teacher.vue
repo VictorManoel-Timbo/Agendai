@@ -72,9 +72,8 @@ export default defineComponent({
             this.user.email = this.user.email + "@uece.br"
 
             this.service.auth.pipe().subscribe({
-                next: (response) => {
+                next: () => {
                     this.$router.push('/')
-                    ToastHandler.success("Usuário cadastrado com sucesso.")
                 }
             })
             this.service.signup(this.user)

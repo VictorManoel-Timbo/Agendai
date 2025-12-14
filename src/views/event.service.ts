@@ -1,6 +1,6 @@
 import type { JournalEventOcurrence } from "@/models/event.model"
 import { JournalEventRest } from "@/services/rest/events.rest"
-import { BehaviorSubject, Observable } from "rxjs"
+import { BehaviorSubject, Observable, take } from "rxjs"
 
 export class JournalEventService {
     constructor(private _event = new JournalEventRest()) { }
@@ -13,7 +13,7 @@ export class JournalEventService {
 
     create(body: { evento: JournalEventOcurrence }): void {
         this._event.create(body)
-            .pipe()
+            .pipe(take(1))
             .subscribe({
                 next: (response) => {
                     this.event$.next(response)
@@ -26,7 +26,7 @@ export class JournalEventService {
 
     addParticipant(id: number, email: string): void {
         this._event.addParticipant(id, email)
-            .pipe()
+            .pipe(take(1))
             .subscribe({
                 next: (response: any) => {
                     this.participants$.next(response)
@@ -39,7 +39,7 @@ export class JournalEventService {
 
     getEvents(params?: { data?: string, categoria?: string }): void {
         this._event.getEvents(params)
-            .pipe()
+            .pipe(take(1))
             .subscribe({
                 next: (response: any) => {
                     this.event$.next(response)
@@ -52,7 +52,7 @@ export class JournalEventService {
 
     getDetailEvent(id: number): void {
         this._event.getDetailEvent(id)
-            .pipe()
+            .pipe(take(1))
             .subscribe({
                 next: (response: any) => {
                     this.event$.next(response)
@@ -65,7 +65,7 @@ export class JournalEventService {
 
     getEventOcurrences(id: number): void {
         this._event.getEventOcurrences(id)
-            .pipe()
+            .pipe(take(1))
             .subscribe({
                 next: (response: any) => {
                     this.event$.next(response)
@@ -78,7 +78,7 @@ export class JournalEventService {
 
     getEventParticipants(id: number): void {
         this._event.getEventParticipants(id)
-            .pipe()
+            .pipe(take(1))
             .subscribe({
                 next: (response: any) => {
                     this.participants$.next(response)
@@ -89,9 +89,9 @@ export class JournalEventService {
             })
     }
 
-    getOcurrenceDateEvent(id: number, date: Date): void {
+    getOcurrenceDateEvent(id: number, date: string): void {
         this._event.getOcurrenceDateEvent(id, date)
-            .pipe()
+            .pipe(take(1))
             .subscribe({
                 next: (response: any) => {
                     this.event$.next(response)
@@ -102,9 +102,11 @@ export class JournalEventService {
             })
     }
 
-    updateOcurrenceDateEvent(id: number, date: Date, body: { local: string, date: Date }): void {
+    updateOcurrenceDateEvent(id: number, date: string, body: {
+        local: string, data: string, horario_inicio: string | null, horario_termino: string | null
+    }): void {
         this._event.updateOcurrenceDateEvent(id, date, body)
-            .pipe()
+            .pipe(take(1))
             .subscribe({
                 next: (response: any) => {
                     this.event$.next(response)
@@ -117,7 +119,7 @@ export class JournalEventService {
 
     delete(id: number): void {
         this._event.delete(id)
-            .pipe()
+            .pipe(take(1))
             .subscribe({
                 next: (response: any) => {
                     this.event$.next(response)
@@ -130,7 +132,7 @@ export class JournalEventService {
 
     removeParticipant(id: number, email: string): void {
         this._event.removeParticipant(id, email)
-            .pipe()
+            .pipe(take(1))
             .subscribe({
                 next: (response: any) => {
                     this.event$.next(response)
@@ -141,9 +143,9 @@ export class JournalEventService {
             })
     }
 
-    cancelOcurrenceDateEvent(id: number, date: Date): void {
+    cancelOcurrenceDateEvent(id: number, date: string): void {
         this._event.cancelOcurrenceDateEvent(id, date)
-            .pipe()
+            .pipe(take(1))
             .subscribe({
                 next: (response: any) => {
                     this.event$.next(response)
