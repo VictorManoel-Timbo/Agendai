@@ -34,77 +34,74 @@ export default defineComponent({
     sendChangeTheme(): void {
       this.$emit("changeMode", true)
     },
+    
     handleSubmitEmail() {
       this.error = ''
       if (!this.email || !this.email.includes('@')) {
         this.error = 'Digite um e-mail válido'
-        this.loading = false
         return
       }
       this.loading = true
-      this.service.sendResetCode(this.email).subscribe({
+      
+      this.service.resetCode.pipe().subscribe({
         next: (response: any) => {
-          this.step = 2
-        },
-        error: (err: any) => {
-          this.error = err?.response?.data?.detail || 'Erro ao enviar código. Tente novamente.'
           this.loading = false
-        },
-        complete: () => {
-          this.loading = false
+          if (response.success) {
+            this.step = 2
+            this.error = ''
+          } else {
+            this.error = response.error?.response?.data?.detail || response.error?.message || 'Erro ao enviar código. Verifique o e-mail e tente novamente.'
+          }
         }
       })
+      this.service.sendResetCode(this.email)
     },
 
     handleSubmitCode() {
       this.error = ''
       if (!this.code || this.code.length !== 6) {
         this.error = 'Digite o código de 6 dígitos'
-        this.loading = false
         return
       }
       this.loading = true
-      this.service.verifyResetCode(this.code).subscribe({
+      
+      this.service.verifyCode.pipe().subscribe({
         next: (response: any) => {
-          this.step = 3
-        },
-        error: (err: any) => {
-          console.error('❌ Erro ao validar código:', err)
-          this.error = err?.response?.data?.detail || 'Código inválido ou expirado.'
           this.loading = false
-        },
-        complete: () => {
-          this.loading = false
+          if (response.success) {
+            this.step = 3
+            this.error = ''
+          } else {
+            this.error = response.error?.response?.data?.detail || response.error?.message || 'Código inválido ou expirado.'
+          }
         }
       })
+      this.service.verifyResetCode(this.code)
     },
 
     handleSubmitPassword() {
       this.error = ''
       if (!this.newPassword || this.newPassword.length < 6) {
         this.error = 'A senha deve ter pelo menos 6 caracteres'
-        this.loading = false
         return
       }
       if (this.newPassword !== this.confirmPassword) {
         this.error = 'As senhas não coincidem'
-        this.loading = false
         return
       }
       this.loading = true
-      this.service.resetPassword(this.newPassword, this.confirmPassword).subscribe({
+      
+      this.service.resetPasswordObs.pipe().subscribe({
         next: (response: any) => {
-          this.$router.push('/login')
-        },
-        error: (err: any) => {
-          console.error('❌ Erro ao redefinir senha:', err)
-          this.error = err?.message || err?.response?.data?.detail || 'Erro ao redefinir senha. Tente novamente.'
           this.loading = false
-        },
-        complete: () => {
-          this.loading = false
+          if (response.success) {
+            this.$router.push('/login')
+          } else {
+            this.error = response.error?.response?.data?.detail || response.error?.message || 'Erro ao redefinir senha. Tente novamente.'
+          }
         }
       })
+      this.service.resetPassword(this.newPassword, this.confirmPassword)
     },
 
     goBack() {
