@@ -6,10 +6,10 @@ class JournalEventOcurrence {
         public id_universidade?: number,
         public data_inicio?: Date | string,
         public data_termino?: Date | string,
-        public horario_inicio?: string,
-        public horario_termino?: string,
+        public horario_inicio?: string | null,
+        public horario_termino?: string | null,
         public local_padrao?: string,
-        public recorrencia?: string,
+        public recorrencia?: string | null,
         public categoria?: string,
         public email_proprietario?: string
     ) { }

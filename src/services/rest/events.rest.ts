@@ -4,7 +4,9 @@ import type { Observable } from "rxjs"
 
 type LocalDate = {
     local: string,
-    date: Date
+    data: string,
+    horario_inicio: string | null,
+    horario_termino: string | null
 }
 
 export class JournalEventRest {
@@ -34,11 +36,11 @@ export class JournalEventRest {
         return api.get(`${this.baseUrl}/${id}/participants`)
     }
 
-    getOcurrenceDateEvent(id: number, date: Date): Observable<void | JournalEvent> {
+    getOcurrenceDateEvent(id: number, date: string): Observable<void | JournalEvent> {
         return api.get(`${this.baseUrl}/${id}/${date}`)
     }
 
-    updateOcurrenceDateEvent(id: number, date: Date, body: LocalDate): Observable<any> {
+    updateOcurrenceDateEvent(id: number, date: string, body: LocalDate): Observable<any> {
         return api.put(`${this.baseUrl}/${id}/${date}`, body)
     }
 
@@ -47,10 +49,10 @@ export class JournalEventRest {
     }
 
     removeParticipant(id: number, email: string): Observable<any> {
-        return api.deleteR(`${this.baseUrl}/${id}/participants/?email_usuario=${email}`)
+        return api.deleteR(`${this.baseUrl}/${id}/participants?email_usuario=${email}`)
     }
 
-    cancelOcurrenceDateEvent(id: number, date: Date): Observable<any> {
+    cancelOcurrenceDateEvent(id: number, date: string): Observable<any> {
         return api.deleteR(`${this.baseUrl}/${id}/${date}`)
     }
 }

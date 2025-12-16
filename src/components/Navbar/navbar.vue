@@ -7,11 +7,11 @@ export default defineComponent({
     data() {
         return {
             options: [
-                { label: 'Inicio', role: 'all', action: () => { window.location.reload() } },
-                { label: 'Horário', role: 'admin', action: () => { console.log("Horário") } },
-                { label: 'Cursos', role: 'admin', action: () => { console.log("Cursos") } },
-                { label: 'Período Letivo', role: 'admin', action: () => { console.log("Período Letivo") } },
-                { label: 'Notificações', role: 'user', action: () => { console.log("Notificações") } },
+                { label: 'Inicio', role: 'all', action: () => { } },
+                { label: 'Horário', role: 'admin', action: () => { } },
+                { label: 'Cursos', role: 'admin', action: () => { } },
+                { label: 'Período Letivo', role: 'admin', action: () => { } },
+                { label: 'Notificações', role: 'user', action: () => { } },
                 { label: 'Sair', role: 'all', action: () => { this.getOut() } },
             ],
             isOpen: false
