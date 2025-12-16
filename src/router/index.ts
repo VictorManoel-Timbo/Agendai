@@ -18,6 +18,15 @@ const router = createRouter({
       }
     },
     {
+      path: '/forgot-password',
+      name: 'ForgotPassword',
+      component: () => import('@/views/ForgotPassword/forgot-password.vue'),
+      meta: {
+        hasNavbar: false,
+        isToDesktop: true
+      }
+    },
+    {
       path: '/signup',
       name: 'Signup',
       component: () => import('@/views/Signup/signup.vue'),
