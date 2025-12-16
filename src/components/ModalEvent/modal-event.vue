@@ -178,12 +178,9 @@ export default defineComponent({
         },
         eventPeriod(newPeriod: Periodo) {
             if (this.isDisciplina && newPeriod) {
-                // Remove a necessidade do cálculo de hora no input principal
                 this.eventForm.horario_inicio = this.getStartTimeByPeriod(newPeriod)
                 this.eventForm.horario_termino = this.getEndTimeByPeriod(newPeriod)
             }
-
-            // Revalida os blocos selecionados se o período mudar para 'noite'
             if (newPeriod === 'noite') {
                 const blocosNoturnosInvalidos = ['E', 'F']
                 const deveLimparBlocos = this.eventForm.hours.some(
@@ -208,7 +205,7 @@ export default defineComponent({
         getStartTimeByPeriod(period: Periodo): Date | null {
             if (!period) return null
             const date = new Date()
-            date.setHours(0, 0, 0, 0) // Zera o horário
+            date.setHours(0, 0, 0, 0)
 
             if (period === 'manha') {
                 date.setUTCHours(7, 0, 0, 0)
@@ -219,23 +216,20 @@ export default defineComponent({
             }
             return date
         },
-        // NOVO: Adiciona função utilitária para obter a hora de término com base no período
         getEndTimeByPeriod(period: Periodo): Date | null {
             if (!period) return null
             const date = new Date()
             date.setHours(0, 0, 0, 0)
 
             if (period === 'manha') {
-                date.setUTCHours(12, 59, 59, 0) // Final do período manhã
+                date.setUTCHours(12, 59, 59, 0) 
             } else if (period === 'tarde') {
-                date.setUTCHours(17, 59, 59, 0) // Final do período tarde
+                date.setUTCHours(17, 59, 59, 0) 
             } else if (period === 'noite') {
-                date.setUTCHours(22, 59, 59, 0) // Final do período noite
+                date.setUTCHours(22, 59, 59, 0) 
             }
             return date
         },
-
-
         getEvent(id: number): void {
             if (id) {
                 this.service.event.pipe().subscribe({
@@ -280,6 +274,7 @@ export default defineComponent({
             this.evento = new JournalEventOcurrence()
             this.evento.email_proprietario = this.email
             this.eventPeriod = null
+            this.emailsParticipants = []
         },
         save(): void {
             if (this.isDisciplina && this.eventPeriod) {
@@ -301,10 +296,6 @@ export default defineComponent({
             if (this.eventForm.categoria === 'disciplina') {
                 const horarioDisciplina = this.buildScheduleString()
 
-                //this.evento.recorrencia = null
-                //this.evento.horario_inicio = null
-                //this.evento.horario_termino= null 
-
                 this.disciplina = {
                     nome: this.eventForm.nome,
                     horario: horarioDisciplina
@@ -318,13 +309,7 @@ export default defineComponent({
             }
 
             this.service.event.pipe().subscribe({
-                next: (response) => {
-                    if (response) {
-                        this.emailsParticipants.forEach(participant => {
-                            this.addParticipant(response.id, participant.email)
-                        })
-                    }
-                }
+                next: (response) => {}
             })
             this.service.create(payload)
             this.$emit("saved")
@@ -335,19 +320,13 @@ export default defineComponent({
             const termino = this.formatTimeUtc(this.eventForm.horario_termino!)
             const eventUptade = {
                 local: this.eventForm.local_padrao,
-                data: this.eventToEdit.date,
+                data: null,
                 horario_inicio: inicio,
                 horario_termino: termino
             }
 
             this.service.event.pipe().subscribe({
-                next: (response) => {
-                    if (response) {
-                        this.emailsParticipants.forEach(participant => {
-                            this.addParticipant(response.id, participant.email)
-                        })
-                    }
-                }
+                next: (response) => { }
             })
             this.service.updateOcurrenceDateEvent(
                 this.eventToEdit.id,
@@ -634,10 +613,10 @@ export default defineComponent({
                     :disabled="isEditing ? true : false" />
             </div>
 
-            <div class="flex flex-col gap-2">
+            <div v-if="isEditing" class="flex flex-col gap-2">
                 <label class="text-sm font-semibold">Participantes:</label>
 
-                <div class="flex flex-wrap gap-2 p-3 border border-gray-300 rounded-lg min-h-10">
+                <div class="flex flex-wrap gap-2 p-3 border border-gray-300 dark:border-gray-600 rounded-lg min-h-10">
                     <Chip v-for="participant in emailsParticipants" :key="participant.id_convidado"
                         :label="participant.email" removable @remove="removeParticipant(participant.email)"
                         class="bg-gray-200 text-gray-700 text-sm font-medium" />
