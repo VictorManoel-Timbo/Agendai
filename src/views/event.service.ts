@@ -103,7 +103,7 @@ export class JournalEventService {
     }
 
     updateOcurrenceDateEvent(id: number, date: string, body: {
-        local: string, data: string, horario_inicio: string | null, horario_termino: string | null
+        local: string, data: string | null, horario_inicio: string | null, horario_termino: string | null
     }): void {
         this._event.updateOcurrenceDateEvent(id, date, body)
             .pipe(take(1))

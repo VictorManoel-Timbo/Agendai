@@ -4,6 +4,7 @@ import { User } from '@/models/user.model'
 import { UserService } from '../user.service'
 import { JournalEventService } from '../event.service'
 import type { JournalEvent } from '@/models/event.model'
+import type modalDeleteVue from '@/components/ModalDelete/modal-delete.vue'
 
 type EventToEdit = { id: number | null, date: string }
 
@@ -38,6 +39,7 @@ export default defineComponent({
                 id: 0,
                 date: ''
             } as EventToEdit,
+            showDeleteModal: false
         }
     },
     mounted() {
@@ -45,15 +47,26 @@ export default defineComponent({
         this.getUser()
     },
     methods: {
-        openCreateEvent(id?: number) {
+        openCreateEvent(id?: number): void {
             this.eventToEdit.id = id!
             this.showCreateEventModal = true
         },
-        closeCreateEvent() {
+        closeCreateEvent(): void {
             this.showCreateEventModal = false
             this.eventToEdit.id = null
         },
-        onEventSaved() {
+        openDeleteModal(id?: number): void {
+            this.eventToEdit.id = id!
+            this.showDeleteModal = true
+        },
+        closeDeleteModal(): void {
+            this.showDeleteModal = false
+        },
+        onEventDeleted(): void {
+            this.showDeleteModal = false
+            this.getEvents({ data: this.dateFilter, categoria: this.selectedCategory })
+        },
+        onEventSaved(): void {
             this.showCreateEventModal = false
             this.getEvents({ data: this.dateFilter, categoria: this.selectedCategory })
         },
@@ -121,7 +134,7 @@ export default defineComponent({
             const categoryKey = event.categoria?.toLowerCase() ?? ''
             return background[categoryKey] ?? 'bg-primary-500'
         },
-        formatHours(hour: string) {
+        formatHours(hour: string, category: string) {
             const parsed = this.parseHourToParts(hour)
 
             if (!parsed) {
@@ -131,7 +144,7 @@ export default defineComponent({
             const { localHours, localMinutes } = this.convertTimeToLocal(parsed.hours, parsed.minutes)
             const pad = (num: number) => String(num).padStart(2, '0')
 
-            return `${pad(localHours)}:${pad(localMinutes)}H`
+            return category === 'Disciplina' ? `${pad(localHours + 3)}:${pad(localMinutes)}H` : `${pad(localHours)}:${pad(localMinutes)}H`
         },
         convertTimeToLocal(utcHours: number, utcMinutes: number): { localHours: number, localMinutes: number } {
             const date = new Date()
@@ -149,7 +162,7 @@ export default defineComponent({
             }
 
             const partes = hour.split(':')
-        
+
             if (partes.length < 2) {
                 return null
             }
@@ -239,8 +252,8 @@ export default defineComponent({
                         <div class="w-full">
                             <h3 class="font-semibold text-lg">{{ event.nome }}</h3>
                             <div class="flex gap-2">
-                                <span>{{ formatHours(event.horario_inicio!) }}</span> -
-                                <span>{{ formatHours(event.horario_termino!) }}</span>
+                                <span>{{ formatHours(event.horario_inicio!, event.categoria!) }}</span> -
+                                <span>{{ formatHours(event.horario_termino!, event.categoria!) }}</span>
                             </div>
                         </div>
 
@@ -249,7 +262,8 @@ export default defineComponent({
                                 @click="openCreateEvent(event.id_evento)">
                                 <v-icon name="pr-pencil" scale="1.2" class="cursor-pointer" />
                             </button>
-                            <button class="p-1 rounded hover:bg-neutral-200 dark:hover:bg-zinc-800">
+                            <button class="p-1 rounded hover:bg-neutral-200 dark:hover:bg-zinc-800"
+                                @click="openDeleteModal(event.id_evento)">
                                 <v-icon name="pr-trash" scale="1.2" class="cursor-pointer" />
                             </button>
                         </div>
@@ -262,6 +276,8 @@ export default defineComponent({
         <Calendar @update:selected="handleDateUpdate"></Calendar>
         <ModalEvent :visible="showCreateEventModal" :email="data.email" :event-to-edit="eventToEdit"
             @close="closeCreateEvent" @saved="onEventSaved" />
+        <ModalDelete :visible="showDeleteModal" :event-to-delete="eventToEdit" @close="closeDeleteModal"
+            @deleted="onEventDeleted" />
     </main>
 </template>
 

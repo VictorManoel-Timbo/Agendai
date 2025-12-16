@@ -4,7 +4,7 @@ import type { Observable } from "rxjs"
 
 type LocalDate = {
     local: string,
-    data: string,
+    data: string | null,
     horario_inicio: string | null,
     horario_termino: string | null
 }
