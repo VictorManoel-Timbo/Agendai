@@ -1,5 +1,5 @@
 import type { ResponseType } from "axios"
-import { Observable, defer, map } from "rxjs"
+import { Observable, config, defer, map } from "rxjs"
 import api from "./setup"
 
 const get = <T>(
@@ -17,10 +17,13 @@ const post = <T>(
     url: string,
     body: object,
     params?: object,
-    baseURL?: string
+    baseURL?: string,
+    config?: object 
 ): Observable<T | void> => {
-    return defer(() => api(baseURL).post<T>(url, body, { params })).pipe(
-        map((result) => result.data)
+    return defer(() =>
+        api(baseURL).post<T>(url,body,{ params, ...(config || {}) } 
+        )
+    ).pipe(map((result) => result.data)
     )
 }
 
